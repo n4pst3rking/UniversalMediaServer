@@ -27,6 +27,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.StringTokenizer;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -60,7 +61,7 @@ public class TranscodingTab {
 	private static final String AUDIO_COL_SPEC = "left:pref, 2dlu, pref:grow";
 	private static final String AUDIO_ROW_SPEC = "$lgap, pref, 2dlu, 4*(pref, 2dlu), pref, 12dlu, 3*(pref, 2dlu), pref:grow";
 	private static final String SUBTITLE_COL_SPEC = "left:pref, 3dlu, pref:grow, 3dlu, right:pref:grow, 3dlu, pref:grow, 3dlu, right:pref:grow, 3dlu, pref:grow, 3dlu, pref:grow";
-	private static final String SUBTITLE_ROW_SPEC = "$lgap, 3*(pref, 3dlu), pref";
+	private static final String SUBTITLE_ROW_SPEC = "$lgap, 13*(pref, 3dlu), pref";
 
 	private final PmsConfiguration configuration;
 	private ComponentOrientation orientation;
@@ -99,6 +100,8 @@ public class TranscodingTab {
 	private JButton folderSelectButton;
 	private JCheckBox subs;
 	private JTextField defaultaudiosubs;
+	private JComboBox priorityAudio;
+	private JComboBox prioritySubtitle;
 
 	/*
 	 * 16 cores is the maximum allowed by MEncoder as of MPlayer r34863.
@@ -757,6 +760,86 @@ public class TranscodingTab {
 			}
 		});
 		builder.add(subs, FormLayoutUtil.flip(cc.xyw(1, 8, 13), colSpec, orientation));
+
+		// The list of available audio languages/options
+		String[] AudioOptionsArray = {
+			"Anything",
+			"Undefined",
+			"English",
+			"French",
+			"Japanese",
+			"German"
+		};
+		String[] AudioOptionsArrayCodes = {
+			"*",
+			"und",
+			"eng",
+			"fre",
+			"jpn",
+			"ger"
+		};
+
+		// The list of available subtitle languages/options
+		String[] SubtitleOptionsArray = {
+			"Anything",
+			"Off",
+			"Undefined",
+			"English",
+			"French",
+			"Japanese",
+		};
+		String[] SubtitleOptionsArrayCodes = {
+			"*",
+			"off",
+			"und",
+			"eng",
+			"fre",
+			"jpn",
+		};
+
+		StringTokenizer st1 = new StringTokenizer(configuration.getAudioSubLanguages(), ";");
+		int rowCounter = 10;
+		int mainLoopCounter = 1;
+		while (st1.hasMoreTokens()) {
+			String pair = st1.nextToken();
+			if (pair.contains(",")) {
+				String audio = pair.substring(0, pair.indexOf(","));
+				String sub = pair.substring(pair.indexOf(",") + 1);
+				audio = audio.trim();
+				sub = sub.trim();
+				LOGGER.trace("Got audio: '" + audio + "' and subtitle: '" + sub + "'");
+
+				// Create GUI elements
+				priorityAudio = new JComboBox(AudioOptionsArray);
+				priorityAudio.setEditable(false);
+
+				int i = 0;
+				for (String option : AudioOptionsArrayCodes) {
+					if (option.equals(audio)) {
+						priorityAudio.setSelectedIndex(i);
+					}
+					i++;
+				}
+				builder.addLabel(mainLoopCounter + ": " + Messages.getString("TrTab2.71"), FormLayoutUtil.flip(cc.xy(3, rowCounter), colSpec, orientation));
+				builder.add(priorityAudio, FormLayoutUtil.flip(cc.xy(5, rowCounter), colSpec, orientation));
+
+				prioritySubtitle = new JComboBox(SubtitleOptionsArray);
+				prioritySubtitle.setEditable(false);
+
+				i = 0;
+				for (String option : SubtitleOptionsArrayCodes) {
+					if (option.equals(sub)) {
+						prioritySubtitle.setSelectedIndex(i);
+					}
+					i++;
+				}
+				builder.addLabel(Messages.getString("TrTab2.72"), FormLayoutUtil.flip(cc.xyw(7, rowCounter, 3), colSpec, orientation));
+				builder.add(prioritySubtitle, FormLayoutUtil.flip(cc.xyw(11, rowCounter, 3), colSpec, orientation));
+
+				rowCounter = rowCounter + 2;
+				mainLoopCounter++;
+			}
+		}
 
 		final JPanel panel = builder.getPanel();
 
