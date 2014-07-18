@@ -242,10 +242,12 @@ public class PmsConfiguration {
 	private static final String KEY_VLC_SAMPLE_RATE_OVERRIDE = "vlc_sample_rate_override";
 	private static final String KEY_VLC_SAMPLE_RATE = "vlc_sample_rate";
 	private static final String KEY_WEB_AUTHENTICATE = "web_authenticate";
+	private static final String KEY_WEB_PORT = "web_port";
 	private static final String KEY_WEB_CONF_PATH = "web_conf";
 	private static final String KEY_WEB_MP4_TRANS = "web_mp4_trans";
 	private static final String KEY_WEB_THREADS = "web_threads";
 	private static final String KEY_WEB_PATH = "web_path";
+	private static final String KEY_WEB_ENABLE = "web_enable";
 	private static final String KEY_X264_CONSTANT_RATE_FACTOR = "x264_constant_rate_factor";
 
 	// The name of the subdirectory under which UMS config files are stored for this build (default: UMS).
@@ -3016,7 +3018,6 @@ public class PmsConfiguration {
 	 */
 	private static final String KEY_NO_FOLDERS = "no_shared";
 	private static final String KEY_WEB_HTTPS = "use_https";
-	private static final String KEY_WEB_PORT = "web_port";
 	private static final int WEB_MAX_THREADS = 100;
 
 	public boolean getNoFolders(String tag) {
@@ -3058,6 +3059,10 @@ public class PmsConfiguration {
 
 	public int getWebPort() {
 		return getInt(KEY_WEB_PORT, 0);
+	}
+
+	public boolean useWebInterface() {
+		return getBoolean(KEY_WEB_ENABLE, true);
 	}
 
 	public boolean isAutomaticMaximumBitrate() {

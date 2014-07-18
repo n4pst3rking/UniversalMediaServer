@@ -695,9 +695,6 @@ public class PMS {
 			return false;
 		}
 
-		// Web stuff
-		web = new RemoteWeb(configuration.getWebPort());
-
 		// initialize the cache
 		if (configuration.getUseCache()) {
 			initializeDatabase(); // XXX: this must be done *before* new MediaLibrary -> new MediaLibraryFolder
@@ -709,6 +706,11 @@ public class PMS {
 		//     a) *after* loading plugins i.e. plugins register root folders then RootFolder.discoverChildren adds them
 		//     b) *after* mediaLibrary is initialized, if enabled (above)
 		getRootFolder(RendererConfiguration.getDefaultConf());
+
+		// Web stuff
+		if (configuration.useWebInterface()) {
+			web = new RemoteWeb(configuration.getWebPort());
+		}
 
 		frame.serverReady();
 

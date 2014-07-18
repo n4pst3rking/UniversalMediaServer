@@ -141,11 +141,11 @@ public class RemoteWeb {
 		return tag;
 	}
 
-	public RootFolder getRoot(String name) {
+	public synchronized RootFolder getRoot(String name) {
 		return getRoot(name, false, null);
 	}
 
-	public RootFolder getRoot(String name, boolean create, HttpExchange t) {
+	public synchronized RootFolder getRoot(String name, boolean create, HttpExchange t) {
 		String groupTag = getTag(name);
 		RootFolder root = roots.get(groupTag);
 		if (!create || (root != null)) {
