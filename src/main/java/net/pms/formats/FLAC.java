@@ -28,7 +28,7 @@ public class FLAC extends OGG {
 
 	public FLAC() {
 		type = AUDIO;
-		secondaryFormat = new AudioAsVideo();
+		//secondaryFormat = new AudioAsVideo();
 	}
 
 	/**
